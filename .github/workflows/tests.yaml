@@ -75,8 +75,10 @@ jobs:
         run: python -c "import os, platform; print(platform.platform(), platform.processor(), os.cpu_count())"
 
       - name: Run Tests
+        # torch on macOS stays serial: xdist workers sharing the runner's MPS device fail (bayesflow fork runs 39158306265, 39161539256)
         run: |
-          uv run pytest -x -m "not slow" -n auto --dist worksteal
+          if [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.backend }}" = "torch" ]; then XDIST=""; else XDIST="-n auto --dist worksteal"; fi
+          uv run pytest -x -m "not slow" $XDIST
 
       - name: Run Slow Tests
         # Run slow tests, such as full integration notebooks:
