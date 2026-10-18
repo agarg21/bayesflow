@@ -70,6 +70,9 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' && matrix.backend == 'torch' }}
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
+      - name: CPU info (fork measurement only)
+        run: python -c "import os, platform; print(platform.platform(), platform.processor(), os.cpu_count())"
+
       - name: Run Tests
         run: |
           uv run pytest -x -m "not slow"
