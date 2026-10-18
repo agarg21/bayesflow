@@ -54,7 +54,11 @@ def pytest_runtest_teardown(item, nextitem):
 
 
 def pytest_make_parametrize_id(config, val, argname):
-    return f"{argname}={repr(val)}"
+    r = repr(val)
+    if " at 0x" in r:
+        # reprs with memory addresses differ between xdist workers and break collection
+        r = getattr(val, "__qualname__", type(val).__qualname__)
+    return f"{argname}={r}"
 
 
 @pytest.fixture(params=[2], scope="session")
