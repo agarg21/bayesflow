@@ -2,14 +2,6 @@ name: Multi-Backend Tests
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
-      - dev
-  push:
-    branches:
-      - main
-      - dev
 
 defaults:
   run:
