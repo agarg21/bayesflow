@@ -71,8 +71,10 @@ jobs:
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
       - name: Run Tests
+        # torch on macOS stays serial: xdist workers sharing the runner's MPS device fail
         run: |
-          uv run pytest -x -m "not slow"
+          if [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.backend }}" = "torch" ]; then XDIST=""; else XDIST="-n auto --dist worksteal"; fi
+          uv run pytest -x -m "not slow" $XDIST
 
       - name: Run Slow Tests
         # Run slow tests, such as full integration notebooks:
